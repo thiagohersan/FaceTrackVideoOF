@@ -1,0 +1,5 @@
+obj/
+.DS_*
+bin/*app
+*/xcuserdata/
+*/*/xcuserdata
