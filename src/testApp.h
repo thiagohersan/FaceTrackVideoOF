@@ -21,10 +21,14 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 	
-    ofTrueTypeFont myFont;
-	unsigned int cc;
-	
 	ofVideoGrabber cam;
 	ofxFaceTracker tracker;
+	
+	ofVec2f position;
+	float scale;
+	ofVec3f orientation;
+	ofMatrix4x4 rotationMatrix;
 
+	//cv::Mat translation, rotation;
+	//ofMatrix4x4 pose;
 };
