@@ -74,6 +74,7 @@ void testApp::draw(){
 			}
 		}
 		
+		// use vector of normalized tex coords to scale image and map it onto mesh
 		for(int i=0; i<normalizedFaceTexCoords.size()&&i<faceMesh.getNumTexCoords(); i++){
 			ofVec2f fv = normalizedFaceTexCoords.at(i);
 			fv.x *= mImage.width;
@@ -86,10 +87,7 @@ void testApp::draw(){
 		ofSetColor(255);
 		faceMesh.draw();
 		mImage.getTextureReference().unbind();
-		
-		//ofSetColor(0,255,0);
-		//faceMesh.drawWireframe();
-		
+				
 		/*
 		 addMessage("/gesture/mouth/width", tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
 		 addMessage("/gesture/mouth/height", tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));
