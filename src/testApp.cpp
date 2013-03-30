@@ -5,10 +5,14 @@ using namespace ofxCv;
 //--------------------------------------------------------------
 void testApp::setup(){
 	ofSetVerticalSync(true);
+	ofEnableAlphaBlending();
 	cam.initGrabber(640, 480);
-
+	
 	tracker.setup();
 	tracker.setRescale(.5);
+	
+	mImage.loadImage("chessBoard.png");
+	normalizedFaceTexCoords.clear();
 }
 
 //--------------------------------------------------------------
@@ -30,20 +34,62 @@ void testApp::draw(){
 	cam.draw(0, 0);
 	ofSetColor(255,255,0);
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, cam.height+20);
-
-	ofSetColor(255);
+	
 	if(tracker.getFound()) {
-		ofSetLineWidth(1);
-		//tracker.draw();
-
 		ofSetupScreenOrtho(640, 480, OF_ORIENTATION_UNKNOWN, true, -1000, 1000);
 		ofTranslate(position.x,position.y-240);
 		applyMatrix(rotationMatrix);
 		ofScale(scale,scale,scale);
-		//ofDrawAxis(scale);
-		ofSetColor(0,255,0);
-		tracker.getObjectMesh().drawWireframe();
-
+		
+		ofMesh faceMesh = tracker.getObjectMesh();
+		
+		// if first time we detect a face, fill faceTexCoord vector with normalized index values
+		//    this is so we have a reference triangle-strip mesh to use when binding texture.
+		//    if we always use the values in the current mesh it will:
+		//    (1) have to be calculated/normalized every time, and
+		//    (2) look "flat"
+		if(normalizedFaceTexCoords.size() <= 0){
+			ofVec2f minT(1000,1000), maxT(0,0);
+			for(int i=0; i<faceMesh.getNumTexCoords(); i++){
+				ofVec2f fv = faceMesh.getTexCoord(i);
+				if(fv.x > maxT.x) {
+					maxT.x = fv.x;
+				}
+				if(fv.x < minT.x) {
+					minT.x = fv.x;
+				}
+				if(fv.y > maxT.y) {
+					maxT.y = fv.y;
+				}
+				if(fv.y < minT.y) {
+					minT.y = fv.y;
+				}
+			}
+			
+			for(int i=0; i<faceMesh.getNumTexCoords(); i++){
+				ofVec2f fv = faceMesh.getTexCoord(i);
+				fv.x = ofMap(fv.x, minT.x, maxT.x, 0, 1.0);
+				fv.y = ofMap(fv.y, minT.y, maxT.y, 0, 1.0);
+				normalizedFaceTexCoords.push_back(fv);
+			}
+		}
+		
+		for(int i=0; i<normalizedFaceTexCoords.size()&&i<faceMesh.getNumTexCoords(); i++){
+			ofVec2f fv = normalizedFaceTexCoords.at(i);
+			fv.x *= mImage.width;
+			fv.y *= mImage.height;
+			faceMesh.setTexCoord(i, fv);
+		}
+		
+		faceMesh.enableTextures();
+		mImage.getTextureReference().bind();
+		ofSetColor(255);
+		faceMesh.draw();
+		mImage.getTextureReference().unbind();
+		
+		//ofSetColor(0,255,0);
+		//faceMesh.drawWireframe();
+		
 		/*
 		 addMessage("/gesture/mouth/width", tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
 		 addMessage("/gesture/mouth/height", tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));
@@ -85,7 +131,7 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-
+	
 }
 
 //--------------------------------------------------------------

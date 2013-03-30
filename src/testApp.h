@@ -28,7 +28,7 @@ public:
 	float scale;
 	ofVec3f orientation;
 	ofMatrix4x4 rotationMatrix;
-
-	//cv::Mat translation, rotation;
-	//ofMatrix4x4 pose;
+	
+	ofImage mImage;
+	vector<ofVec2f> normalizedFaceTexCoords;
 };
