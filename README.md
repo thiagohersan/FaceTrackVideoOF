@@ -1,6 +1,6 @@
-Right now this is just the empty example from ofxFaceTracker.
+Simple ofxFaceTracker example. Eventually we will have video mapped to a face and some special effects triggered by person's mouth shape and other features.
 
-To compile/run this you need:
+To compile this you need:
 - ofxOpenCv (comes with oF)
 - ofxCv (https://github.com/kylemcdonald/ofxCv)
 - ofxFaceTracker (https://github.com/kylemcdonald/ofxFaceTracker)
