@@ -1,48 +1,87 @@
 #include "testApp.h"
 
 using namespace ofxCv;
+using std::string;
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	ofSetVerticalSync(true);
-	ofEnableAlphaBlending();
-	cam.initGrabber(640, 480);
-	
+	//ofSetVerticalSync(true);
+	//ofEnableAlphaBlending();
+	/*cam.initGrabber(640, 480);
+
 	tracker.setup();
 	tracker.setRescale(.5);
-	
+
 	mImage.loadImage("chessBoard.png");
 	normalizedFaceTexCoords.clear();
+	*/
+
+	// SETTING UP MULTIPLE WINDOWS WITH OFXFENSTER
+
+    //IF the following code is uncommented, all the following windows should be created on the second display, if there is one available
+	ofxDisplayList displays = ofxDisplayManager::get()->getDisplays();
+	ofxDisplay* disp = displays[0];
+	cout << "displays found: " << displays.size() << endl;
+	if(displays.size() > 1)
+		disp = displays[1];
+	ofxFensterManager::get()->setActiveDisplay(disp);
+
+    int winW=640, winH=480;
+
+    ccw = new cameraCaptureWindow(&cam);
+    ftw = new faceTrackerWindow(&cam, &tracker);
+
+    ofxFenster* win=ofxFensterManager::get()->createFenster(0, 0, winW, winH, OF_WINDOW);
+    win->addListener(ccw);
+    win->setWindowTitle("camera capture");
+
+    win=ofxFensterManager::get()->createFenster(0, 0, winW, winH, OF_WINDOW);
+    win->addListener(ftw);
+    win->setWindowTitle("face tracking");
+
+	//setup of fensterListener does not get called automatically yet
+	ccw->setup();
+	ftw->setup();
+
+	// FINISH WINDOW SETUP
+
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-	cam.update();
+	/*cam.update();
 	if(cam.isFrameNew()) {
 		tracker.update(toCv(cam));
 		position = tracker.getPosition();
 		scale = tracker.getScale();
 		orientation = tracker.getOrientation();
 		rotationMatrix = tracker.getRotationMatrix();
-	}
+	}*/
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	ofBackground(0);
-	ofSetColor(255);
-	cam.draw(0, 0);
-	ofSetColor(255,255,0);
-	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, cam.height+20);
-	
+    /*
+    ofSetColor(255);
+    cam.draw(0, 0);
+    */
+
+    ofBackground(0);
+    ofSetColor(255,255,0);
+
+    string appInfo = "Face tracking prototype.\nf - toggle fullscreen\nd - redetect face\nFPS: " + ofToString(ofGetFrameRate()) + "\n";
+    ofDrawBitmapString(appInfo, 10, 20);
+
+
+    /*
 	if(tracker.getFound()) {
 		ofSetupScreenOrtho(640, 480, OF_ORIENTATION_UNKNOWN, true, -1000, 1000);
 		ofTranslate(position.x,position.y-240);
 		applyMatrix(rotationMatrix);
 		ofScale(scale,scale,scale);
-		
+
 		ofMesh faceMesh = tracker.getObjectMesh();
-		
+
 		// if first time we detect a face, fill faceTexCoord vector with normalized index values
 		//    this is so we have a reference triangle-strip mesh to use when binding texture.
 		//    if we always use the values in the current mesh it will:
@@ -65,7 +104,7 @@ void testApp::draw(){
 					minT.y = fv.y;
 				}
 			}
-			
+
 			for(int i=0; i<faceMesh.getNumTexCoords(); i++){
 				ofVec2f fv = faceMesh.getTexCoord(i);
 				fv.x = ofMap(fv.x, minT.x, maxT.x, 0, 1.0);
@@ -73,7 +112,7 @@ void testApp::draw(){
 				normalizedFaceTexCoords.push_back(fv);
 			}
 		}
-		
+
 		// use vector of normalized tex coords to scale image and map it onto mesh
 		for(int i=0; i<normalizedFaceTexCoords.size()&&i<faceMesh.getNumTexCoords(); i++){
 			ofVec2f fv = normalizedFaceTexCoords.at(i);
@@ -81,13 +120,15 @@ void testApp::draw(){
 			fv.y *= mImage.height;
 			faceMesh.setTexCoord(i, fv);
 		}
-		
+
 		faceMesh.enableTextures();
 		mImage.getTextureReference().bind();
 		ofSetColor(255);
 		faceMesh.draw();
 		mImage.getTextureReference().unbind();
-				
+
+		//mImage.draw(0,0);
+
 		/*
 		 addMessage("/gesture/mouth/width", tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
 		 addMessage("/gesture/mouth/height", tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));
@@ -104,50 +145,54 @@ void testApp::draw(){
 		 ofPolyline rightEye = tracker.getImageFeature(ofxFaceTracker::RIGHT_EYE);
 		 ofPolyline faceOutline = tracker.getImageFeature(ofxFaceTracker::FACE_OUTLINE);
 		 */
-	}
+	//}
+
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-	tracker.reset();
+    if(key=='f')
+		ofxFensterManager::get()->getPrimaryWindow()->toggleFullscreen();
+    if(key=='d')
+        tracker.reset();
 }
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::gotMessage(ofMessage msg){
-	
+
 }
 
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){
-	
+
 }
