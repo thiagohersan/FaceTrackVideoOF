@@ -16,8 +16,8 @@ void testApp::setup(){
 
     int winW=640, winH=480;
 
-    ccw = new cameraCaptureWindow(&cam);
-    ftw = new faceTrackerWindow(&cam, &tracker);
+    ccw = new cameraCaptureWindow();
+    ftw = new faceTrackerWindow();
 
     ofxFenster* win=ofxFensterManager::get()->createFenster(0, 0, winW, winH, OF_WINDOW);
     win->addListener(ccw);
