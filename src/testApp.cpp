@@ -41,7 +41,6 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	// why is this here?
     ofBackground(0);
     ofSetColor(255,255,0);
     string appInfo = "Face tracking prototype.\nf - toggle fullscreen\nd - redetect face\nFPS: " + ofToString(ofGetFrameRate()) + "\n";
