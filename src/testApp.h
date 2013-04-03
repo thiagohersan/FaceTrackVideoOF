@@ -29,14 +29,6 @@ public:
     ofVideoGrabber cam;
     ofxFaceTracker tracker;
 
-    ofVec2f position;
-    float scale;
-    ofVec3f orientation;
-    ofMatrix4x4 rotationMatrix;
-
-    ofImage mImage;
-    vector<ofVec2f> normalizedFaceTexCoords;
-
     cameraCaptureWindow* ccw;
     faceTrackerWindow* ftw;
     faceOverlayWindow* fow;

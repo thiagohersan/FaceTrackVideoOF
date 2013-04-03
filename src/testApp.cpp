@@ -32,7 +32,6 @@ void testApp::setup(){
 	ftw->setup();
 
 	// FINISH WINDOW SETUP
-
 }
 
 //--------------------------------------------------------------
