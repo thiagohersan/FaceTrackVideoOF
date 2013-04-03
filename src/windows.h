@@ -6,43 +6,36 @@
 #include "ofxFaceTracker.h"
 
 
-class cameraCaptureWindow: public ofxFensterListener
-{
-public:
+class cameraCaptureWindow: public ofxFensterListener {
 
+public:
     ofVideoGrabber* capture;
 
-    cameraCaptureWindow(ofVideoGrabber* cam)
-    {
+    cameraCaptureWindow(ofVideoGrabber* cam) {
         this->capture = cam;
     }
 
-    ~cameraCaptureWindow()
-    {
+    ~cameraCaptureWindow() {
         cout << "Image Listener destroyed" << endl;
     }
 
-    void setup()
-    {
+    void setup() {
         ofSetVerticalSync(true);
         capture->initGrabber(640, 480);
     }
 
-    void update()
-    {
+    void update() {
         capture->update();
     }
 
-    void draw()
-    {
+    void draw() {
         capture->draw(0,0);
     }
 };
 
-class faceTrackerWindow: public ofxFensterListener
-{
-public:
+class faceTrackerWindow: public ofxFensterListener {
 
+public:
     ofVideoGrabber* capture;
     ofxFaceTracker* tracker;
 
@@ -55,20 +48,16 @@ public:
 
     ofImage mOverlayImage;
 
-    faceTrackerWindow(ofVideoGrabber* cam, ofxFaceTracker* t)
-    {
+    faceTrackerWindow(ofVideoGrabber* cam, ofxFaceTracker* t) {
         this->capture = cam;
         this->tracker = t;
     }
 
-    ~faceTrackerWindow()
-    {
+    ~faceTrackerWindow() {
         cout << "Image Listener destroyed" << endl;
     }
 
-    void setup()
-    {
-
+    void setup() {
         ofSetVerticalSync(true);
         ofEnableAlphaBlending();
 
@@ -79,13 +68,9 @@ public:
         normalizedFaceTexCoords.clear();
     }
 
-    void update()
-    {
-        if(capture->isFrameNew())
-        {
-
+    void update() {
+        if(capture->isFrameNew()) {
             tracker->update(ofxCv::toCv(*capture));
-
             position = tracker->getPosition();
             scale = tracker->getScale();
             orientation = tracker->getOrientation();
@@ -93,12 +78,9 @@ public:
         }
     }
 
-    void draw()
-    {
+    void draw() {
         ofBackground(0);
-       // capture->draw(0,0);
-        if(tracker->getFound())
-        {
+        if(tracker->getFound()) {
             ofSetupScreenOrtho(640, 480, OF_ORIENTATION_UNKNOWN, true, -1000, 1000);
             ofTranslate(position.x,position.y);
             ofxCv::applyMatrix(rotationMatrix);
@@ -111,32 +93,25 @@ public:
             //    if we always use the values in the current mesh it will:
             //    (1) have to be calculated/normalized every time, and
             //    (2) look "flat"
-            if(normalizedFaceTexCoords.size() <= 0)
-            {
+            if(normalizedFaceTexCoords.size() <= 0) {
                 ofVec2f minT(1000,1000), maxT(0,0);
-                for(int i=0; i<faceMesh.getNumTexCoords(); i++)
-                {
+                for(int i=0; i<faceMesh.getNumTexCoords(); i++) {
                     ofVec2f fv = faceMesh.getTexCoord(i);
-                    if(fv.x > maxT.x)
-                    {
+                    if(fv.x > maxT.x) {
                         maxT.x = fv.x;
                     }
-                    if(fv.x < minT.x)
-                    {
+                    if(fv.x < minT.x) {
                         minT.x = fv.x;
                     }
-                    if(fv.y > maxT.y)
-                    {
+                    if(fv.y > maxT.y) {
                         maxT.y = fv.y;
                     }
-                    if(fv.y < minT.y)
-                    {
+                    if(fv.y < minT.y) {
                         minT.y = fv.y;
                     }
                 }
 
-                for(int i=0; i<faceMesh.getNumTexCoords(); i++)
-                {
+                for(int i=0; i<faceMesh.getNumTexCoords(); i++){
                     ofVec2f fv = faceMesh.getTexCoord(i);
                     fv.x = ofMap(fv.x, minT.x, maxT.x, 0, 1.0);
                     fv.y = ofMap(fv.y, minT.y, maxT.y, 0, 1.0);
@@ -145,8 +120,7 @@ public:
             }
 
             // use vector of normalized tex coords to scale image and map it onto mesh
-            for(int i=0; i<normalizedFaceTexCoords.size()&&i<faceMesh.getNumTexCoords(); i++)
-            {
+            for(int i=0; i<normalizedFaceTexCoords.size()&&i<faceMesh.getNumTexCoords(); i++){
                 ofVec2f fv = normalizedFaceTexCoords.at(i);
                 fv.x *= mOverlayImage.width;
                 fv.y *= mOverlayImage.height;
@@ -162,12 +136,10 @@ public:
     }
 };
 
-class faceOverlayWindow: public ofxFensterListener
-{
-public:
+class faceOverlayWindow: public ofxFensterListener {
 
-    ~faceOverlayWindow()
-    {
+public:
+    ~faceOverlayWindow(){
         cout << "Image Listener destroyed" << endl;
     }
 };

@@ -1,7 +1,6 @@
 #include "testApp.h"
 
 using namespace ofxCv;
-using std::string;
 
 //--------------------------------------------------------------
 void testApp::setup(){

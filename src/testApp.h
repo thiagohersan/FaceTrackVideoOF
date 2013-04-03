@@ -9,8 +9,7 @@
 #include "ofxFaceTracker.h"
 #include "windows.h"
 
-class testApp : public ofBaseApp
-{
+class testApp : public ofBaseApp {
 
 public:
     void setup();
